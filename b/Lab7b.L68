@@ -1,0 +1,63 @@
+00008000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 11/17/2022 3:28:00 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      : Lab7b
+00000000                             3  * Written by : Your name goes here
+00000000                             4  * Date       : dd/mm/yyyy
+00000000                             5  * Description: Example of Privilege Violation Exception
+00000000                             6  *              with return from handler
+00000000                             7  *-----------------------------------------------------------
+00000000                             8  
+00000000                             9          MEMORY ROM 0,1023
+00000000                            10  
+00000000                            11  * The main program starts below
+00008000                            12          ORG     $8000
+00008000  027C DFFF                 13  main    ANDI    #$DFFF,SR
+00008004  007C 2000                 14          ORI     #$2000,SR
+00008008                            15  
+00008008                            16  * Execute upon return from exception
+00008008  43F9 00008016             17          LEA     MSG2,A1
+0000800E  700D                      18          MOVE.L  #13,D0
+00008010  4E4F                      19          TRAP    #15
+00008012                            20  
+00008012  FFFF FFFF                 21          SIMHALT
+00008016                            22  
+00008016= 52 65 74 75 72 6E ...     23  MSG2    DC.B    'Return from Exception (RTE) successful! Running Main code.',0
+00008051                            24  
+00008051                            25  * The code below is included as a system initialization
+00008051                            26  * program
+00008051                            27  
+00008051                            28  * Update Vector Table
+00008051  =00000020                 29  PRVADDR EQU     $20
+00000020                            30          ORG     PRVADDR
+00000020= 00000400                  31          DC.L    PRVHANDLER
+00000024                            32  
+00000024                            33  * Privilege violation exception handler
+00000400                            34          ORG     $400
+00000400                            35  PRVHANDLER
+00000400  48E7 8040                 36          MOVEM.L  A1/D0,-(A7)     ;save working registers
+00000404  43F9 00000418             37          LEA     MSG,A1
+0000040A  700D                      38          MOVE.L  #13,D0
+0000040C  4E4F                      39          TRAP    #15
+0000040E  4CDF 0201                 40          MOVEM.L  (A7)+,A1/D0     ;restore working registers
+00000412  4E73                      41          RTE                     ;return from exception
+00000414                            42  
+00000414  FFFF FFFF                 43          SIMHALT
+00000418= 50 72 69 76 69 6C ...     44  MSG     DC.B    'Privilege Violation has occurred. Program terminated.',0
+0000044E                            45  
+0000044E                            46          END     $8000
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+MAIN                8000
+MSG                 418
+MSG2                8016
+PRVADDR             20
+PRVHANDLER          400

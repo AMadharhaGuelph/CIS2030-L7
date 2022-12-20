@@ -1,0 +1,61 @@
+00008000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 11/17/2022 3:30:23 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      : Lab7d
+00000000                             3  * Written by : Your name goes here
+00000000                             4  * Date       : dd/mm/yyyy
+00000000                             5  * Description: Example of Privilege Violation
+00000000                             6  *-----------------------------------------------------------
+00000000                             7  
+00000000                             8          MEMORY  ROM 0,7
+00000000                             9  
+00000000                            10  * The code below is included as a system initialization
+00000000                            11  * program
+00000000                            12  
+00000000  =00000000                 13  RESET   EQU     0           ;reset Vector Address
+00000000  =FFFFFFFE                 14  SSP     EQU     $FFFFFFFE   ;initial value of SSP
+00000000  =00000400                 15  PC      EQU     $00000400   ;initial value of PC
+00000000                            16  
+00000000                            17  
+00000000                            18  * Part 1: Update Vector Table
+00000000                            19  
+00000000                            20          ORG     RESET
+00000000= FFFFFFFE                  21          DC.L    SSP
+00000004= 00000400                  22          DC.L    PC
+00000008                            23  
+00000008                            24  * Part 2: Simple Monitor Program
+00000400                            25          ORG     $400
+00000400  43F9 0000802A             26          LEA     MSG1,A1
+00000406  700D                      27          MOVE.L  #13,D0
+00000408  4E4F                      28          TRAP    #15
+0000040A                            29  
+0000040A  FFFF FFFF                 30          SIMHALT
+0000040E                            31  
+0000040E                            32  * Part 3: Simple running program
+00008000                            33          ORG     $8000
+00008000  027C DFFF                 34          ANDI    #$DFFF,SR
+00008004  43F9 00008010             35          LEA     MSG2,A1
+0000800A  700D                      36          MOVE.L  #13,D0
+0000800C  4E4F                      37  LOOP    TRAP    #15
+0000800E  60FC                      38          BRA     LOOP
+00008010                            39  
+00008010= 50 72 6F 63 65 73 ...     40  MSG2    DC.B    'Process running as normal',0
+0000802A= 52 65 73 65 74 20 ...     41  MSG1    DC.B    'Reset Exception has occurred, terminating process, and initiating monitor program',0
+0000807C                            42  
+0000807C                            43          END     $8000
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+LOOP                800C
+MSG1                802A
+MSG2                8010
+PC                  400
+RESET               0
+SSP                 FFFFFFFE

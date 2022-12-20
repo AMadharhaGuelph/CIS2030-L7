@@ -1,0 +1,53 @@
+00008000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 11/17/2022 4:21:15 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :
+00000000                             3  * Written by :
+00000000                             4  * Date       :
+00000000                             5  * Description:
+00000000                             6  *-----------------------------------------------------------
+00008000                             7              ORG         $8000
+00008000  4E40                       8  main:       TRAP        #0
+00008002  4E40                       9              TRAP        #0
+00008004  4E40                      10              TRAP        #0
+00008006  4E40                      11              TRAP        #0
+00008008                            12  
+00008008  FFFF FFFF                 13              SIMHALT   
+0000800C                            14  
+0000800C  =00000080                 15  VTABLE      EQU         $80
+00000080                            16              ORG         VTABLE
+00000080= 00000400                  17              DC.L        HANDLER
+00000084                            18            
+00000400                            19              ORG         $400     
+00000400                            20  HANDLER                                        
+00000400  48E7 4040                 21              MOVEM.L     D1/A1,-(SP)          ;saving working registers
+00000404                            22             
+00000404  322F 0008                 23              MOVE.W      8(SP),D1             ;moving SR to D1
+00000408  0241 2000                 24              ANDI        #$2000,D1            ;removing all other bit values 
+0000040C  0C81 00002000             25              CMPI.L      #$2000,D1            ;is 13 on or off?
+00000412  6700 000C                 26              BEQ         OFF                  ;on -> turnoff
+00000416                            27                  
+00000416  006F 2000 0008            28              ORI         #$2000,8(SP)         ;otherwise, turning on bit 13
+0000041C  6000 0008                 29              BRA         RETURN               ;return
+00000420                            30                  
+00000420  026F DFFF 0008            31  OFF         ANDI        #$DFFF,8(SP)         ;turning off bit 13
+00000426                            32                  
+00000426  4CDF 0202                 33  RETURN      MOVEM.L     (SP)+,D1/A1          ;restoring working registers
+0000042A  4E73                      34              RTE 
+0000042C                            35  
+0000042C                            36              END         main      
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+HANDLER             400
+MAIN                8000
+OFF                 420
+RETURN              426
+VTABLE              80

@@ -1,0 +1,52 @@
+00008000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 2022-11-16 5:22:42 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      : Lab7a
+00000000                             3  * Written by : Your name goes here
+00000000                             4  * Date       : dd/mm/yyyy
+00000000                             5  * Description: Example of Privilege Violation Exception
+00000000                             6  *-----------------------------------------------------------
+00000000                             7  
+00000000                             8          MEMORY ROM 0,1023
+00000000                             9  
+00000000                            10  * The main program starts below
+00008000                            11          ORG     $8000
+00008000  027C DFFF                 12  main    ANDI    #$DFFF,SR
+00008004  007C 2000                 13          ORI     #$2000,SR
+00008008                            14  
+00008008  FFFF FFFF                 15          SIMHALT
+0000800C                            16  
+0000800C                            17  
+0000800C                            18  * The code below is included as a system initialization
+0000800C                            19  * program
+0000800C                            20  
+0000800C                            21  * Update Vector Table
+0000800C  =00000020                 22  PRVADDR EQU     $20
+00000020                            23          ORG     PRVADDR
+00000020= 00000400                  24          DC.L    PRVHANDLER
+00000024                            25  
+00000024                            26  * Privilege violation exception handler
+00000400                            27          ORG     $400
+00000400                            28  PRVHANDLER
+00000400  43F9 0000040E             29          LEA     MSG,A1
+00000406  700D                      30          MOVE.L  #13,D0
+00000408  4E4F                      31          TRAP    #15
+0000040A                            32  
+0000040A  FFFF FFFF                 33          SIMHALT
+0000040E= 50 72 69 76 69 6C ...     34  MSG     DC.B    'Privilege Violation has occurred. Main code segment termainted.',0
+0000044E                            35  
+0000044E                            36          END     $8000
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+MAIN                8000
+MSG                 40E
+PRVADDR             20
+PRVHANDLER          400
